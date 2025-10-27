@@ -7,104 +7,128 @@
     --brand-dark-blue: #003366;
     --brand-text: #ffffff;
     --brand-charcoal: #231f20;
+    --brand-shadow: rgba(0,0,0,0.25);
 }
 
-/* --- Display Overlay Styles --- */
-body {
-    background: transparent;
-    font-family: 'Inter', system-ui, sans-serif;
+/* --- Global Styles --- */
+* {
+    box-sizing: border-box;
     margin: 0;
-    
-    /* Position the container at the bottom-left */
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', system-ui, sans-serif;
+    height: 100vh;
     display: flex;
     justify-content: flex-start;
     align-items: flex-end;
-    height: 100vh;
     padding: 50px;
-    box-sizing: border-box;
-    overflow: hidden; 
+    background: transparent;
+    overflow: hidden;
+    perspective: 1500px; /* for 3D card motion */
 }
 
+/* --- Comment Container --- */
 #comment-container {
-    /* The container itself just fades in, acting as a stage */
-    opacity: 0;
-    transition: opacity 0.3s ease-out;
-    
-    max-width: 60%; 
+    max-width: 60%;
     min-width: 400px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px var(--brand-shadow);
     
-    /* We need this for the "wipe" effect */
-    border-radius: 10px;
-    overflow: hidden; 
+    /* Initial fade-in */
+    opacity: 0;
+    transform: translateY(50px) rotateX(15deg) scale(0.95);
+    transition: 
+        opacity 0.6s ease-out, 
+        transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 #comment-container.visible {
     opacity: 1;
+    transform: translateY(0) rotateX(0deg) scale(1);
 }
 
-/* --- NEW "WIPE" ANIMATION --- */
+/* --- Header Animation --- */
 #comment-header {
     background: var(--brand-dark-blue);
     color: var(--brand-text);
-    padding: 10px 30px;
-    font-size: 1.1rem;
+    padding: 12px 30px;
+    font-size: 1.2rem;
     font-weight: 700;
     letter-spacing: 0.5px;
-    
-    /* 1. Start: Hidden */
-    transform: translateX(-100%);
-    opacity: 0;
-    
-    /* 2. Animate: A fast, sharp "cubic-bezier" spring */
-    transition: all 0.5s cubic-bezier(0.1, 0.9, 0.3, 1);
-    
-    /* This makes the text inside not wrap */
     white-space: nowrap;
+    
+    /* Wipe-in from left */
+    transform: translateX(-120%);
+    opacity: 0;
+    transition: transform 0.6s cubic-bezier(0.68,-0.55,0.27,1.55), opacity 0.6s ease-out;
 }
+
 #comment-container.visible #comment-header {
-    /* 3. End: Visible */
     transform: translateX(0);
     opacity: 1;
 }
 
+/* --- Body Animation --- */
 #comment-body {
     background: var(--brand-teal);
     color: var(--brand-text);
     padding: 25px 30px;
-    
-    /* 1. Start: Hidden */
-    transform: translateX(-100%);
+    transform: translateX(-120%);
     opacity: 0;
-    
-    /* 2. Animate: Slightly delayed to follow the header */
-    transition: all 0.5s cubic-bezier(0.1, 0.9, 0.3, 1) 0.1s;
+    transition: transform 0.6s cubic-bezier(0.68,-0.55,0.27,1.55) 0.1s, opacity 0.6s ease-out 0.1s;
 }
+
 #comment-container.visible #comment-body {
-    /* 3. End: Visible */
     transform: translateX(0);
     opacity: 1;
 }
 
+/* --- Text Animation --- */
 #comment-text {
-    font-size: 1.9rem;
+    font-size: 2rem;
     font-weight: 600;
     line-height: 1.4;
-    white-space: pre-wrap; 
+    white-space: pre-wrap;
     
-    /* 1. Start: Text is invisible */
     opacity: 0;
-    
-    /* 2. Animate: Fade in *after* the boxes are in place */
-    transition: opacity 0.4s ease-out 0.4s;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease-out 0.4s, transform 0.5s ease-out 0.4s;
 }
+
 #comment-container.visible #comment-text {
-    /* 3. End: Text is visible */
     opacity: 1;
+    transform: translateY(0);
 }
 
+/* --- Floating & Subtle Motion --- */
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-4px); }
+}
 
-/* --- Control Panel Styles (Unchanged) --- */
+#comment-container {
+    animation: float 4s ease-in-out infinite;
+}
+
+/* --- Optional: Glowing Header on Hover --- */
+#comment-header:hover {
+    box-shadow: 0 0 15px var(--brand-teal);
+    transform: scale(1.03);
+}
+
+/* --- Button Hover Effects --- */
+button {
+    transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+button:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+}
+
+/* --- Controller Styles (unchanged, polished) --- */
 .controller {
     max-width: 700px;
     margin: 2rem auto;
@@ -116,7 +140,7 @@ body {
 .controller h1 { margin-top: 0; color: #111; }
 .controller textarea { width: 100%; min-height: 120px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 8px; padding: 12px; font-size: 1.1rem; margin-bottom: 1rem; }
 .controller .buttons { display: flex; gap: 1rem; flex-wrap: wrap; }
-.controller button { padding: 0.8rem 1.5rem; font-size: 1rem; font-weight: 600; border: none; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; }
+.controller button { padding: 0.8rem 1.5rem; font-size: 1rem; font-weight: 600; border: none; border-radius: 8px; cursor: pointer; }
 #btn-add-queue { background: #34c759; color: white; }
 #btn-add-queue:hover { background: #2a9e47; }
 #btn-display-next { background: #007aff; color: white; }
