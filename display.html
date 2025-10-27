@@ -9,12 +9,18 @@
 <body>
     
     <div id="comment-container">
-        <div id="comment-text"></div>
+        <div id="comment-header">NEW QUESTION</div>
+        <div id="comment-body">
+            <div id="comment-text"></div>
+        </div>
     </div>
 
     <script>
         const commentContainer = document.getElementById('comment-container');
         const commentText = document.getElementById('comment-text');
+
+        // This is the localStorage key our control panel will set
+        const CURRENT_COMMENT_KEY = 'ecamm_current_comment';
 
         function updateComment(text) {
             if (text && text.trim() !== '') {
@@ -29,14 +35,13 @@
 
         // 1. Listen for changes from other tabs (the control panel)
         window.addEventListener('storage', (event) => {
-            if (event.key === 'ecamm_comment') {
+            if (event.key === CURRENT_COMMENT_KEY) {
                 updateComment(event.newValue);
             }
         });
 
         // 2. Check the value on page load (in case Ecamm refreshes)
-        updateComment(localStorage.getItem('ecamm_comment'));
-
+        updateComment(localStorage.getItem(CURRENT_COMMENT_KEY));
     </script>
 </body>
 </html>
