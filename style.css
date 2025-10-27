@@ -3,8 +3,8 @@
 
 /* --- Key FAAA-inspired Colors --- */
 :root {
-    --brand-teal: #00a99d; /* Main color from FAAA logo */
-    --brand-dark-blue: #003366; /* Dark blue from FAAA site */
+    --brand-teal: #00a99d; 
+    --brand-dark-blue: #003366;
     --brand-text: #ffffff;
     --brand-charcoal: #231f20;
 }
@@ -26,24 +26,24 @@ body {
 }
 
 #comment-container {
-    /* This is the main container, hidden by default */
-    /* NEW ANIMATION: The container itself just fades */
+    /* The container itself just fades in, acting as a stage */
     opacity: 0;
     transition: opacity 0.3s ease-out;
     
     max-width: 60%; 
     min-width: 400px;
-    border-radius: 10px;
-    overflow: hidden; /* Clips the child elements to the border radius */
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    
+    /* We need this for the "wipe" effect */
+    border-radius: 10px;
+    overflow: hidden; 
 }
 
 #comment-container.visible {
-    /* When visible, container just becomes opaque */
     opacity: 1;
 }
 
-/* NEW ANIMATION: Header slides in from the left */
+/* --- NEW "WIPE" ANIMATION --- */
 #comment-header {
     background: var(--brand-dark-blue);
     color: var(--brand-text);
@@ -52,31 +52,38 @@ body {
     font-weight: 700;
     letter-spacing: 0.5px;
     
-    /* Animation settings */
+    /* 1. Start: Hidden */
+    transform: translateX(-100%);
     opacity: 0;
-    transform: translateX(-100px);
-    transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+    
+    /* 2. Animate: A fast, sharp "cubic-bezier" spring */
+    transition: all 0.5s cubic-bezier(0.1, 0.9, 0.3, 1);
+    
+    /* This makes the text inside not wrap */
+    white-space: nowrap;
 }
 #comment-container.visible #comment-header {
-    opacity: 1;
+    /* 3. End: Visible */
     transform: translateX(0);
+    opacity: 1;
 }
 
-/* NEW ANIMATION: Body slides in staggered after the header */
 #comment-body {
     background: var(--brand-teal);
     color: var(--brand-text);
     padding: 25px 30px;
     
-    /* Animation settings */
+    /* 1. Start: Hidden */
+    transform: translateX(-100%);
     opacity: 0;
-    transform: translateX(-100px);
-    /* Note the 0.1s delay */
-    transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s;
+    
+    /* 2. Animate: Slightly delayed to follow the header */
+    transition: all 0.5s cubic-bezier(0.1, 0.9, 0.3, 1) 0.1s;
 }
 #comment-container.visible #comment-body {
-    opacity: 1;
+    /* 3. End: Visible */
     transform: translateX(0);
+    opacity: 1;
 }
 
 #comment-text {
@@ -84,10 +91,20 @@ body {
     font-weight: 600;
     line-height: 1.4;
     white-space: pre-wrap; 
+    
+    /* 1. Start: Text is invisible */
+    opacity: 0;
+    
+    /* 2. Animate: Fade in *after* the boxes are in place */
+    transition: opacity 0.4s ease-out 0.4s;
+}
+#comment-container.visible #comment-text {
+    /* 3. End: Text is visible */
+    opacity: 1;
 }
 
-/* --- Control Panel Styles --- */
-/* (All other .controller styles are unchanged) */
+
+/* --- Control Panel Styles (Unchanged) --- */
 .controller {
     max-width: 700px;
     margin: 2rem auto;
@@ -108,8 +125,6 @@ body {
 #btn-clear-all:hover { background: #c70000; }
 #queue-status { font-size: 1.25rem; font-weight: 600; color: var(--brand-dark-blue); margin-top: 2rem; border-bottom: 2px solid #eee; padding-bottom: 0.5rem; }
 #queue-list { list-style: none; padding: 0; margin-top: 1rem; max-height: 300px; overflow-y: auto; }
-
-/* Styles for each item in the queue list */
 #queue-list li {
     background: #f7f7f7;
     border: 1px solid #ddd;
@@ -118,22 +133,16 @@ body {
     border-radius: 5px;
     font-size: 1rem;
     color: #333;
-    
-    /* NEW: Use flexbox to put button at the end */
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 15px;
 }
-
-/* NEW: Style for the comment text inside the list item */
 #queue-list li span {
     white-space: pre-wrap;
     word-break: break-word;
-    flex-grow: 1; /* Allows text to take up available space */
+    flex-grow: 1; 
 }
-
-/* NEW: Style for the individual delete button */
 .btn-delete-item {
     padding: 5px 10px;
     font-size: 0.8rem;
@@ -143,7 +152,7 @@ body {
     cursor: pointer;
     background: #ff3b30;
     color: white;
-    flex-shrink: 0; /* Prevents button from shrinking */
+    flex-shrink: 0; 
 }
 .btn-delete-item:hover {
     background: #c70000;
