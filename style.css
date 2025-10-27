@@ -27,11 +27,10 @@ body {
 
 #comment-container {
     /* This is the main container, hidden by default */
+    /* NEW ANIMATION: The container itself just fades */
     opacity: 0;
-    transform: translateY(40px); /* Start 40px down */
-    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transition: opacity 0.3s ease-out;
     
-    /* Graphic styles */
     max-width: 60%; 
     min-width: 400px;
     border-radius: 10px;
@@ -40,12 +39,11 @@ body {
 }
 
 #comment-container.visible {
-    /* This class is added by JS to make it appear */
+    /* When visible, container just becomes opaque */
     opacity: 1;
-    transform: translateY(0);
 }
 
-/* A dark blue header bar for the graphic */
+/* NEW ANIMATION: Header slides in from the left */
 #comment-header {
     background: var(--brand-dark-blue);
     color: var(--brand-text);
@@ -53,27 +51,43 @@ body {
     font-size: 1.1rem;
     font-weight: 700;
     letter-spacing: 0.5px;
+    
+    /* Animation settings */
+    opacity: 0;
+    transform: translateX(-100px);
+    transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+#comment-container.visible #comment-header {
+    opacity: 1;
+    transform: translateX(0);
 }
 
-/* The main teal body for the comment text */
+/* NEW ANIMATION: Body slides in staggered after the header */
 #comment-body {
     background: var(--brand-teal);
     color: var(--brand-text);
     padding: 25px 30px;
+    
+    /* Animation settings */
+    opacity: 0;
+    transform: translateX(-100px);
+    /* Note the 0.1s delay */
+    transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s;
+}
+#comment-container.visible #comment-body {
+    opacity: 1;
+    transform: translateX(0);
 }
 
 #comment-text {
     font-size: 1.9rem;
     font-weight: 600;
     line-height: 1.4;
-    
-    /* This ensures that line breaks from the textarea are respected */
     white-space: pre-wrap; 
 }
 
 /* --- Control Panel Styles --- */
-/* (We can also add styles for the control panel here) */
-
+/* (All other .controller styles are unchanged) */
 .controller {
     max-width: 700px;
     margin: 2rem auto;
@@ -82,82 +96,20 @@ body {
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
+.controller h1 { margin-top: 0; color: #111; }
+.controller textarea { width: 100%; min-height: 120px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 8px; padding: 12px; font-size: 1.1rem; margin-bottom: 1rem; }
+.controller .buttons { display: flex; gap: 1rem; flex-wrap: wrap; }
+.controller button { padding: 0.8rem 1.5rem; font-size: 1rem; font-weight: 600; border: none; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; }
+#btn-add-queue { background: #34c759; color: white; }
+#btn-add-queue:hover { background: #2a9e47; }
+#btn-display-next { background: #007aff; color: white; }
+#btn-display-next:hover { background: #0056b3; }
+#btn-clear-all { background: #ff3b30; color: white; }
+#btn-clear-all:hover { background: #c70000; }
+#queue-status { font-size: 1.25rem; font-weight: 600; color: var(--brand-dark-blue); margin-top: 2rem; border-bottom: 2px solid #eee; padding-bottom: 0.5rem; }
+#queue-list { list-style: none; padding: 0; margin-top: 1rem; max-height: 300px; overflow-y: auto; }
 
-.controller h1 {
-    margin-top: 0;
-    color: #111;
-}
-
-.controller textarea {
-    width: 100%;
-    min-height: 120px;
-    box-sizing: border-box; 
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 12px;
-    font-size: 1.1rem;
-    margin-bottom: 1rem;
-}
-
-.controller .buttons {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
-}
-
-.controller button {
-    padding: 0.8rem 1.5rem;
-    font-size: 1rem;
-    font-weight: 600;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-/* --- New Button Styles --- */
-#btn-add-queue {
-    background: #34c759; /* Green */
-    color: white;
-}
-#btn-add-queue:hover {
-    background: #2a9e47;
-}
-
-#btn-display-next {
-    background: #007aff; /* Blue */
-    color: white;
-}
-#btn-display-next:hover {
-    background: #0056b3;
-}
-
-#btn-clear-all {
-    background: #ff3b30; /* Red */
-    color: white;
-}
-#btn-clear-all:hover {
-    background: #c70000;
-}
-
-/* --- New Queue Display Styles --- */
-#queue-status {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--brand-dark-blue);
-    margin-top: 2rem;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 0.5rem;
-}
-
-#queue-list {
-    list-style: none;
-    padding: 0;
-    margin-top: 1rem;
-    max-height: 300px;
-    overflow-y: auto;
-}
-
+/* Styles for each item in the queue list */
 #queue-list li {
     background: #f7f7f7;
     border: 1px solid #ddd;
@@ -167,7 +119,32 @@ body {
     font-size: 1rem;
     color: #333;
     
-    /* This ensures long comments are readable */
+    /* NEW: Use flexbox to put button at the end */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+/* NEW: Style for the comment text inside the list item */
+#queue-list li span {
     white-space: pre-wrap;
     word-break: break-word;
+    flex-grow: 1; /* Allows text to take up available space */
+}
+
+/* NEW: Style for the individual delete button */
+.btn-delete-item {
+    padding: 5px 10px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background: #ff3b30;
+    color: white;
+    flex-shrink: 0; /* Prevents button from shrinking */
+}
+.btn-delete-item:hover {
+    background: #c70000;
 }
