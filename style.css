@@ -26,10 +26,41 @@ body {
     padding: 50px;
     background: transparent;
     overflow: hidden;
-    perspective: 1500px; /* for 3D card motion */
+    perspective: 1500px;
 }
 
-/* --- Comment Container --- */
+/*
+--- 1. LOGO ANIMATION ---
+*/
+#logo-container {
+    /* Center the logo in the same spot */
+    position: absolute;
+    bottom: 50px;
+    left: 50px;
+    
+    /* Logo sizing */
+    width: 400px; 
+    
+    /* Animation: Start hidden */
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+#logo-container.visible {
+    opacity: 1;
+    transform: scale(1);
+}
+
+#logo-container img {
+    width: 100%;
+    filter: drop-shadow(0 10px 15px var(--brand-shadow));
+}
+
+
+/*
+--- 2. COMMENT GRAPHIC ANIMATION ---
+*/
 #comment-container {
     max-width: 60%;
     min-width: 400px;
@@ -37,7 +68,7 @@ body {
     overflow: hidden;
     box-shadow: 0 20px 40px var(--brand-shadow);
     
-    /* Initial fade-in */
+    /* Initial state (from your code) */
     opacity: 0;
     transform: translateY(50px) rotateX(15deg) scale(0.95);
     transition: 
@@ -46,11 +77,12 @@ body {
 }
 
 #comment-container.visible {
+    /* Visible state (from your code) */
     opacity: 1;
     transform: translateY(0) rotateX(0deg) scale(1);
 }
 
-/* --- Header Animation --- */
+/* --- Header Wipe Animation --- */
 #comment-header {
     background: var(--brand-dark-blue);
     color: var(--brand-text);
@@ -60,124 +92,11 @@ body {
     letter-spacing: 0.5px;
     white-space: nowrap;
     
-    /* Wipe-in from left */
-    transform: translateX(-120%);
-    opacity: 0;
-    transition: transform 0.6s cubic-bezier(0.68,-0.55,0.27,1.55), opacity 0.6s ease-out;
-}
-
-#comment-container.visible #comment-header {
-    transform: translateX(0);
-    opacity: 1;
-}
-
-/* --- Body Animation --- */
-#comment-body {
-    background: var(--brand-teal);
-    color: var(--brand-text);
-    padding: 25px 30px;
-    transform: translateX(-120%);
-    opacity: 0;
-    transition: transform 0.6s cubic-bezier(0.68,-0.55,0.27,1.55) 0.1s, opacity 0.6s ease-out 0.1s;
-}
-
-#comment-container.visible #comment-body {
-    transform: translateX(0);
-    opacity: 1;
-}
-
-/* --- Text Animation --- */
-#comment-text {
-    font-size: 2rem;
-    font-weight: 600;
-    line-height: 1.4;
-    white-space: pre-wrap;
+    /* This creates a <div> to hold the two fading spans */
+    position: relative;
+    height: 47px; /* Set a fixed height for stability */
     
+    /* Wipe-in from left (from your code) */
+    transform: translateX(-120%);
     opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.5s ease-out 0.4s, transform 0.5s ease-out 0.4s;
-}
-
-#comment-container.visible #comment-text {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* --- Floating & Subtle Motion --- */
-@keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-4px); }
-}
-
-#comment-container {
-    animation: float 4s ease-in-out infinite;
-}
-
-/* --- Optional: Glowing Header on Hover --- */
-#comment-header:hover {
-    box-shadow: 0 0 15px var(--brand-teal);
-    transform: scale(1.03);
-}
-
-/* --- Button Hover Effects --- */
-button {
-    transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
-}
-button:hover {
-    transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
-}
-
-/* --- Controller Styles (unchanged, polished) --- */
-.controller {
-    max-width: 700px;
-    margin: 2rem auto;
-    background: #fff;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
-.controller h1 { margin-top: 0; color: #111; }
-.controller textarea { width: 100%; min-height: 120px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 8px; padding: 12px; font-size: 1.1rem; margin-bottom: 1rem; }
-.controller .buttons { display: flex; gap: 1rem; flex-wrap: wrap; }
-.controller button { padding: 0.8rem 1.5rem; font-size: 1rem; font-weight: 600; border: none; border-radius: 8px; cursor: pointer; }
-#btn-add-queue { background: #34c759; color: white; }
-#btn-add-queue:hover { background: #2a9e47; }
-#btn-display-next { background: #007aff; color: white; }
-#btn-display-next:hover { background: #0056b3; }
-#btn-clear-all { background: #ff3b30; color: white; }
-#btn-clear-all:hover { background: #c70000; }
-#queue-status { font-size: 1.25rem; font-weight: 600; color: var(--brand-dark-blue); margin-top: 2rem; border-bottom: 2px solid #eee; padding-bottom: 0.5rem; }
-#queue-list { list-style: none; padding: 0; margin-top: 1rem; max-height: 300px; overflow-y: auto; }
-#queue-list li {
-    background: #f7f7f7;
-    border: 1px solid #ddd;
-    padding: 12px;
-    margin-bottom: 8px;
-    border-radius: 5px;
-    font-size: 1rem;
-    color: #333;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 15px;
-}
-#queue-list li span {
-    white-space: pre-wrap;
-    word-break: break-word;
-    flex-grow: 1; 
-}
-.btn-delete-item {
-    padding: 5px 10px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    background: #ff3b30;
-    color: white;
-    flex-shrink: 0; 
-}
-.btn-delete-item:hover {
-    background: #c70000;
-}
+    transition: transform 0.6s cubic-bezier
