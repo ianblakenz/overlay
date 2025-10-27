@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comment Controller</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background: #f0f2f5;
+            padding: 2rem;
+            font-family: system-ui, sans-serif;
+        }
+        .controller {
+            max-width: 600px;
+            margin: auto;
+            background: #fff;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        h1 {
+            margin-top: 0;
+            color: #111;
+        }
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            box-sizing: border-box; /* Important for padding to work */
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+        .buttons {
+            display: flex;
+            gap: 1rem;
+        }
+        button {
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        #btn-display {
+            background: #007aff;
+            color: white;
+        }
+        #btn-display:hover {
+            background: #0056b3;
+        }
+        #btn-clear {
+            background: #e0e0e0;
+            color: #333;
+        }
+        #btn-clear:hover {
+            background: #c5c5c5;
+        }
+    </style>
+</head>
+<body>
+    <div class="controller">
+        <h1>Ecamm Comment Control</h1>
+        <p>Paste a comment below, proofread it, and click 'Display'.</p>
+        
+        <textarea id="comment-input" placeholder="Paste comment here..."></textarea>
+        
+        <div class="buttons">
+            <button id="btn-display">Display Comment</button>
+            <button id="btn-clear">Clear Comment</button>
+        </div>
+    </div>
+
+    <script>
+        const commentInput = document.getElementById('comment-input');
+        const displayButton = document.getElementById('btn-display');
+        const clearButton = document.getElementById('btn-clear');
+
+        displayButton.addEventListener('click', () => {
+            const commentText = commentInput.value;
+            // Save the proofread comment to localStorage
+            localStorage.setItem('ecamm_comment', commentText);
+        });
+
+        clearButton.addEventListener('click', () => {
+            // Clear the comment from localStorage
+            localStorage.setItem('ecamm_comment', '');
+            commentInput.value = ''; // Also clear the text box
+        });
+    </script>
+</body>
+</html>
