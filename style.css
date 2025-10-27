@@ -1,45 +1,42 @@
 /* Import a clean, modern font */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+/* --- Key FAAA-inspired Colors --- */
+:root {
+    --brand-teal: #00a99d; /* Main color from FAAA logo */
+    --brand-dark-blue: #003366; /* Dark blue from FAAA site */
+    --brand-text: #ffffff;
+    --brand-charcoal: #231f20;
+}
 
 /* --- Display Overlay Styles --- */
 body {
-    /* THIS IS THE MOST IMPORTANT PART FOR ECAMM */
     background: transparent;
-    
     font-family: 'Inter', system-ui, sans-serif;
     margin: 0;
-    padding: 0;
     
-    /* We'll position the comment at the bottom-left, with 50px padding */
+    /* Position the container at the bottom-left */
     display: flex;
     justify-content: flex-start;
     align-items: flex-end;
     height: 100vh;
     padding: 50px;
     box-sizing: border-box;
-    overflow: hidden; /* Hide anything that slides off-screen */
+    overflow: hidden; 
 }
 
 #comment-container {
-    background: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
-    color: white;
-    padding: 20px 28px;
-    border-radius: 12px;
-    
-    /* Frosted glass effect */
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    
-    max-width: 60%; /* Don't let it take up the whole screen */
-    font-size: 1.8rem; /* Adjust as needed */
-    
-    /* Animation settings */
+    /* This is the main container, hidden by default */
     opacity: 0;
-    transform: translateY(40px);
+    transform: translateY(40px); /* Start 40px down */
     transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    
+    /* Graphic styles */
+    max-width: 60%; 
+    min-width: 400px;
+    border-radius: 10px;
+    overflow: hidden; /* Clips the child elements to the border radius */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
 }
 
 #comment-container.visible {
@@ -48,8 +45,129 @@ body {
     transform: translateY(0);
 }
 
+/* A dark blue header bar for the graphic */
+#comment-header {
+    background: var(--brand-dark-blue);
+    color: var(--brand-text);
+    padding: 10px 30px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+/* The main teal body for the comment text */
+#comment-body {
+    background: var(--brand-teal);
+    color: var(--brand-text);
+    padding: 25px 30px;
+}
+
 #comment-text {
+    font-size: 1.9rem;
     font-weight: 600;
+    line-height: 1.4;
+    
     /* This ensures that line breaks from the textarea are respected */
     white-space: pre-wrap; 
+}
+
+/* --- Control Panel Styles --- */
+/* (We can also add styles for the control panel here) */
+
+.controller {
+    max-width: 700px;
+    margin: 2rem auto;
+    background: #fff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.controller h1 {
+    margin-top: 0;
+    color: #111;
+}
+
+.controller textarea {
+    width: 100%;
+    min-height: 120px;
+    box-sizing: border-box; 
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+}
+
+.controller .buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+}
+
+.controller button {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* --- New Button Styles --- */
+#btn-add-queue {
+    background: #34c759; /* Green */
+    color: white;
+}
+#btn-add-queue:hover {
+    background: #2a9e47;
+}
+
+#btn-display-next {
+    background: #007aff; /* Blue */
+    color: white;
+}
+#btn-display-next:hover {
+    background: #0056b3;
+}
+
+#btn-clear-all {
+    background: #ff3b30; /* Red */
+    color: white;
+}
+#btn-clear-all:hover {
+    background: #c70000;
+}
+
+/* --- New Queue Display Styles --- */
+#queue-status {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--brand-dark-blue);
+    margin-top: 2rem;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 0.5rem;
+}
+
+#queue-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 1rem;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+#queue-list li {
+    background: #f7f7f7;
+    border: 1px solid #ddd;
+    padding: 12px;
+    margin-bottom: 8px;
+    border-radius: 5px;
+    font-size: 1rem;
+    color: #333;
+    
+    /* This ensures long comments are readable */
+    white-space: pre-wrap;
+    word-break: break-word;
 }
