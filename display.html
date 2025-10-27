@@ -18,29 +18,23 @@
     <script>
         const commentContainer = document.getElementById('comment-container');
         const commentText = document.getElementById('comment-text');
-
-        // This is the localStorage key our control panel will set
         const CURRENT_COMMENT_KEY = 'ecamm_current_comment';
 
         function updateComment(text) {
             if (text && text.trim() !== '') {
-                // If there is text, show it
                 commentText.innerText = text;
                 commentContainer.classList.add('visible');
             } else {
-                // If the text is empty, hide it
                 commentContainer.classList.remove('visible');
             }
         }
 
-        // 1. Listen for changes from other tabs (the control panel)
         window.addEventListener('storage', (event) => {
             if (event.key === CURRENT_COMMENT_KEY) {
                 updateComment(event.newValue);
             }
         });
 
-        // 2. Check the value on page load (in case Ecamm refreshes)
         updateComment(localStorage.getItem(CURRENT_COMMENT_KEY));
     </script>
 </body>
