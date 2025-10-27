@@ -8,34 +8,100 @@
 </head>
 <body>
     
+    <div id="logo-container">
+        <img src="https://media.faaa.com.au/logo/faaa_logo.png" alt="FAAA Logo">
+    </div>
+
     <div id="comment-container">
-        <div id="comment-header">NEW QUESTION</div>
+        <div id="comment-header">
+            <span id="header-text-static">FAAA Live</span>
+            <span id="header-text-time"></span>
+        </div>
         <div id="comment-body">
             <div id="comment-text"></div>
         </div>
     </div>
 
     <script>
+        // --- Get All Elements ---
+        const logoContainer = document.getElementById('logo-container');
         const commentContainer = document.getElementById('comment-container');
         const commentText = document.getElementById('comment-text');
-        const CURRENT_COMMENT_KEY = 'ecamm_current_comment';
+        const headerStatic = document.getElementById('header-text-static');
+        const headerTime = document.getElementById('header-text-time');
 
-        function updateComment(text) {
-            if (text && text.trim() !== '') {
-                commentText.innerText = text;
-                commentContainer.classList.add('visible');
-            } else {
-                commentContainer.classList.remove('visible');
-            }
+        const CURRENT_COMMENT_KEY = 'ecamm_current_comment';
+        
+        // --- Header Timer Logic ---
+        let headerInterval = null; // Stores our 5-second timer
+
+        function startHeaderTimer() {
+            // Clear any old timer just in case
+            if (headerInterval) clearInterval(headerInterval);
+
+            let showTime = false;
+            
+            // This function does the text swap and cross-fade
+            const updateHeaderText = () => {
+                if (showTime) {
+                    const now = new Date();
+                    // Get time like "10:52 PM" (uses device's local time)
+                    const timeString = now.toLocaleTimeString('en-AU', {
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                    });
+                    headerTime.textContent = timeString;
+                    
+                    // Cross-fade: Show time, hide "FAAA Live"
+                    headerStatic.style.opacity = '0';
+                    headerTime.style.opacity = '1';
+                } else {
+                    // Cross-fade: Show "FAAA Live", hide time
+                    headerStatic.style.opacity = '1';
+                    headerTime.style.opacity = '0';
+                }
+                showTime = !showTime; // Flip the toggle
+            };
+            
+            // Run it once immediately, then start the 5-second loop
+            updateHeaderText();
+            headerInterval = setInterval(updateHeaderText, 5000);
         }
 
-        window.addEventListener('storage', (event) => {
-            if (event.key === CURRENT_COMMENT_KEY) {
-                updateComment(event.newValue);
-            }
-        });
+        function stopHeaderTimer() {
+            // Stop the 5-second loop and reset the text
+            if (headerInterval) clearInterval(headerInterval);
+            headerInterval = null;
+            headerStatic.style.opacity = '1';
+            headerTime.style.opacity = '0';
+        }
 
-        updateComment(localStorage.getItem(CURRENT_COMMENT_KEY));
-    </script>
-</body>
-</html>
+        // --- Main Animation & Logic ---
+        let isAnimating = false; // Prevents spam-clicking
+        let currentText = '';    // Stores the currently displayed text
+
+        function updateComment(text) {
+            // Don't re-animate if the text is the same or if we're busy
+            if (isAnimating || text === currentText) return;
+            
+            currentText = text; // Store the new text
+
+            if (text && text.trim() !== '') {
+                // --- SEQUENCE TO *SHOW* A COMMENT ---
+                isAnimating = true;
+                
+                // 1. Hide the question (if it's already visible)
+                commentContainer.classList.remove('visible');
+                stopHeaderTimer();
+                
+                // 2. Show the Logo
+                logoContainer.classList.add('visible');
+
+                // 3. Wait 2.5 seconds for the logo animation
+                setTimeout(() => {
+                    
+                    // 4. Hide the Logo
+                    logoContainer.classList.remove('visible');
+                    
+                    // 5. Update the comment text *while* it's hidden
+                    commentText
