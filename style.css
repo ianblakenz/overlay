@@ -1,0 +1,55 @@
+/* Import a clean, modern font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+/* --- Display Overlay Styles --- */
+body {
+    /* THIS IS THE MOST IMPORTANT PART FOR ECAMM */
+    background: transparent;
+    
+    font-family: 'Inter', system-ui, sans-serif;
+    margin: 0;
+    padding: 0;
+    
+    /* We'll position the comment at the bottom-left, with 50px padding */
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-end;
+    height: 100vh;
+    padding: 50px;
+    box-sizing: border-box;
+    overflow: hidden; /* Hide anything that slides off-screen */
+}
+
+#comment-container {
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+    color: white;
+    padding: 20px 28px;
+    border-radius: 12px;
+    
+    /* Frosted glass effect */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    
+    max-width: 60%; /* Don't let it take up the whole screen */
+    font-size: 1.8rem; /* Adjust as needed */
+    
+    /* Animation settings */
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+#comment-container.visible {
+    /* This class is added by JS to make it appear */
+    opacity: 1;
+    transform: translateY(0);
+}
+
+#comment-text {
+    font-weight: 600;
+    /* This ensures that line breaks from the textarea are respected */
+    white-space: pre-wrap; 
+}
