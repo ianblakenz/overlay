@@ -3,94 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comment Controller</title>
+    <title>Comment Queue Controller</title>
     <link rel="stylesheet" href="style.css">
     <style>
+        /* Add a little extra style just for the controller body */
         body {
             background: #f0f2f5;
-            padding: 2rem;
-            font-family: system-ui, sans-serif;
-        }
-        .controller {
-            max-width: 600px;
-            margin: auto;
-            background: #fff;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
-        h1 {
-            margin-top: 0;
-            color: #111;
-        }
-        textarea {
-            width: 100%;
-            min-height: 150px;
-            box-sizing: border-box; /* Important for padding to work */
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            padding: 12px;
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
-        }
-        .buttons {
-            display: flex;
-            gap: 1rem;
-        }
-        button {
-            padding: 0.8rem 1.5rem;
-            font-size: 1rem;
-            font-weight: 600;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        #btn-display {
-            background: #007aff;
-            color: white;
-        }
-        #btn-display:hover {
-            background: #0056b3;
-        }
-        #btn-clear {
-            background: #e0e0e0;
-            color: #333;
-        }
-        #btn-clear:hover {
-            background: #c5c5c5;
         }
     </style>
 </head>
 <body>
     <div class="controller">
-        <h1>Ecamm Comment Control</h1>
-        <p>Paste a comment below, proofread it, and click 'Display'.</p>
+        <h1>Comment Queue Manager</h1>
+        <p>Paste a comment below and click 'Add to Queue'.</p>
         
         <textarea id="comment-input" placeholder="Paste comment here..."></textarea>
         
         <div class="buttons">
-            <button id="btn-display">Display Comment</button>
-            <button id="btn-clear">Clear Comment</button>
+            <button id="btn-add-queue">Add to Queue</button>
+            <button id="btn-display-next">Display Next Comment</button>
+            <button id="btn-clear-all">Clear All</button>
         </div>
+
+        <div id="queue-status">0 comments in queue</div>
+        <ul id="queue-list">
+            </ul>
     </div>
 
     <script>
+        // Define our localStorage keys
+        const QUEUE_KEY = 'ecamm_comment_queue';
+        const CURRENT_COMMENT_KEY = 'ecamm_current_comment';
+
+        // Get all the buttons and inputs
         const commentInput = document.getElementById('comment-input');
-        const displayButton = document.getElementById('btn-display');
-        const clearButton = document.getElementById('btn-clear');
+        const addButton = document.getElementById('btn-add-queue');
+        const displayNextButton = document.getElementById('btn-display-next');
+        const clearAllButton = document.getElementById('btn-clear-all');
+        const queueStatus = document.getElementById('queue-status');
+        const queueList = document.getElementById('queue-list');
 
-        displayButton.addEventListener('click', () => {
-            const commentText = commentInput.value;
-            // Save the proofread comment to localStorage
-            localStorage.setItem('ecamm_comment', commentText);
+        // --- Helper Functions ---
+
+        // Get the queue from localStorage (or return an empty array)
+        function getQueue() {
+            return JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]');
+        }
+
+        // Save the queue back to localStorage
+        function saveQueue(queue) {
+            localStorage.setItem(QUEUE_KEY, JSON.stringify(queue));
+        }
+
+        // Update the HTML to show the current queue
+        function renderQueue() {
+            const queue = getQueue();
+            
+            // Update the count
+            queueStatus.textContent = `${queue.length} comments in queue`;
+
+            // Clear the old list
+            queueList.innerHTML = '';
+
+            // Re-create the list
+            queue.forEach(comment => {
+                const li = document.createElement('li');
+                li.textContent = comment;
+                queueList.appendChild(li);
+            });
+        }
+
+        // --- Button Event Listeners ---
+
+        // "Add to Queue" button
+        addButton.addEventListener('click', () => {
+            const text = commentInput.value;
+            if (text.trim() === '') return; // Do nothing if empty
+
+            const queue = getQueue();
+            queue.push(text); // Add new comment to the end of the array
+            saveQueue(queue);
+
+            commentInput.value = ''; // Clear the text box
+            renderQueue();
         });
 
-        clearButton.addEventListener('click', () => {
-            // Clear the comment from localStorage
-            localStorage.setItem('ecamm_comment', '');
-            commentInput.value = ''; // Also clear the text box
+        // "Display Next Comment" button
+        displayNextButton.addEventListener('click', () => {
+            const queue = getQueue();
+            if (queue.length === 0) {
+                // If queue is empty, just clear the display
+                localStorage.setItem(CURRENT_COMMENT_KEY, '');
+                return;
+            }
+
+            const nextComment = queue.shift(); // Get and remove the FIRST item
+            saveQueue(queue); // Save the now-smaller queue
+            
+            // This is the magic! Set the comment for display.html to see
+            localStorage.setItem(CURRENT_COMMENT_KEY, nextComment);
+            
+            renderQueue();
         });
+
+        // "Clear All" button
+        clearAllButton.addEventListener('click', () => {
+            saveQueue([]); // Save an empty array
+            localStorage.setItem(CURRENT_COMMENT_KEY, ''); // Clear the display
+            renderQueue();
+        });
+
+        // --- Initial Load ---
+        // Render the queue when the page first loads
+        renderQueue();
+
     </script>
 </body>
 </html>
